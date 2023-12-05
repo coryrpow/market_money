@@ -43,6 +43,7 @@ group :development, :test do
   gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'main'
   gem "pry"
   gem "rspec-rails"
+  gem "shoulda-matchers"
   gem 'simplecov', require: false, group: :test
 end
 
