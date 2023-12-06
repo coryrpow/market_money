@@ -4,6 +4,6 @@ FactoryBot.define do
     description { Faker::TvShows::AquaTeenHungerForce.quote }
     contact_name { Faker::TvShows::Seinfeld.character }
     contact_phone { Faker::PhoneNumber.phone_number }
-    credit_accepted { false }
+    credit_accepted { Faker::Boolean.boolean }
   end
 end

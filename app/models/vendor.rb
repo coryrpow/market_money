@@ -3,7 +3,7 @@ class Vendor < ApplicationRecord
                         :description,
                         :contact_name,
                         :contact_phone,
-                        :credit_accepted
+  validates(:credit_accepted, exclusion: { in: [nil] })
                         
   has_many :market_vendors
   has_many :markets, through: :market_vendors
