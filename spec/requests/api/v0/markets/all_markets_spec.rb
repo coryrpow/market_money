@@ -12,12 +12,12 @@ RSpec.describe 'Markets API endpoints' do
       expect(response.status).to eq(200)
 
       parse = JSON.parse(response.body, symbolize_names: true)
-      # require 'pry';binding.pry
+
       markets = parse[:data]
       expect(markets.count).to eq(3)
 
       markets.each do |market|
-        # require 'pry';binding.pry
+   
         expect(market[:attributes]).to have_key(:name)
         expect(market[:attributes][:name]).to be_an(String)
 
@@ -41,63 +41,19 @@ RSpec.describe 'Markets API endpoints' do
 
         expect(market[:attributes]).to have_key(:lon)
         expect(market[:attributes][:lon]).to be_an(String)
-        # require 'pry';binding.pry
+       
         expect(market[:attributes]).to have_key(:vendor_count)
         expect(market[:attributes][:vendor_count]).to be_an(Integer)
       end
     end
-  
-# Need to look in to callbacks for implementing vendor_count
-    it 'it displays the attribute vendor_count' do
-      create_list(:market, 3)
-
-      get "/api/v0/markets"
-    
-      
-      expect(response).to be_successful
-      expect(response.status).to eq(200)
-
-      parse = JSON.parse(response.body, symbolize_names: true)
-      # require 'pry';binding.pry
-      markets = parse[:data]
-      expect(markets.count).to eq(3)
-
-      markets.each do |market|
-        expect(market[:attributes]).to have_key(:name)
-        expect(market[:attributes][:name]).to be_an(String)
-
-        expect(market[:attributes]).to have_key(:street)
-        expect(market[:attributes][:street]).to be_a(String)
-
-        expect(market[:attributes]).to have_key(:city)
-        expect(market[:attributes][:city]).to be_a(String)
-
-        expect(market[:attributes]).to have_key(:county)
-        expect(market[:attributes][:county]).to be_a(String)
-
-        expect(market[:attributes]).to have_key(:state)
-        expect(market[:attributes][:state]).to be_a(String)
-
-        expect(market[:attributes]).to have_key(:zip)
-        expect(market[:attributes][:zip]).to be_an(String)
-
-        expect(market[:attributes]).to have_key(:lat)
-        expect(market[:attributes][:lat]).to be_an(String)
-
-        expect(market[:attributes]).to have_key(:lon)
-        expect(market[:attributes][:lon]).to be_an(String)
-
-        # expect(market).to have_key(:vendor_count)
-        # expect(market[:vendor_count]).to be_an(Integer)
-      end
-    end
   end
+
   describe "/api/v0/markets/:id" do
     it "sends a single market with all attributes" do
       market_id = create(:market).id
 
       get "/api/v0/markets/#{market_id}"
-      # require 'pry';binding.pry
+      
       expect(response).to be_successful
       expect(response.status).to eq(200)
 
@@ -128,6 +84,9 @@ RSpec.describe 'Markets API endpoints' do
 
       expect(market).to have_key(:lon)
       expect(market[:lon]).to be_an(String)
+
+      expect(market).to have_key(:vendor_count)
+      expect(market[:vendor_count]).to be_an(Integer)
     end
 
 
@@ -153,58 +112,46 @@ RSpec.describe 'Markets API endpoints' do
     it "sends a single market with all attributes" do
       market_id = create(:market).id
       vendors = create_list(:vendor, 6)
-
+      vendors.each do |vendor|
+        create(:market_vendor, market_id: market_id, vendor: vendor)
+      end
       get "/api/v0/markets/#{market_id}/vendors"
       
       expect(response).to be_successful
       expect(response.status).to eq(200)
 
       parse = JSON.parse(response.body, symbolize_names: true)
-      vendors = parse[:data]
-      require 'pry';binding.pry
+      # require 'pry';binding.pry
+      vendor = parse[:data][0][:attributes]
 
-      vendors.each do |vendor|
-        create(:market_vendor, market_id: market_id, vendor: vendor)
+      expect(vendor).to have_key(:name)
+      expect(vendor[:name]).to be_an(String)
 
-        expect(vendor).to have_key(:name)
-        expect(vendor[:name]).to be_an(String)
+      expect(vendor).to have_key(:description)
+      expect(vendor[:description]).to be_a(String)
 
-        expect(vendor).to have_key(:street)
-        expect(vendor[:street]).to be_a(String)
+      expect(vendor).to have_key(:contact_name)
+      expect(vendor[:contact_name]).to be_a(String)
 
-        expect(vendor).to have_key(:city)
-        expect(vendor[:city]).to be_a(String)
+      expect(vendor).to have_key(:contact_phone)
+      expect(vendor[:contact_phone]).to be_a(String)
 
-        expect(vendor).to have_key(:county)
-        expect(vendor[:county]).to be_a(String)
-
-        expect(vendor).to have_key(:state)
-        expect(vendor[:state]).to be_a(String)
-
-        expect(vendor).to have_key(:zip)
-        expect(vendor[:zip]).to be_an(String)
-
-        expect(vendor).to have_key(:lat)
-        expect(vendor[:lat]).to be_an(String)
-
-        expect(vendor).to have_key(:lon)
-        expect(vendor[:lon]).to be_an(String)
-      end
+      expect(vendor).to have_key(:credit_accepted)
+      expect(vendor[:credit_accepted]).to eq(true).or eq(false)
     end
-    # I think this has to have a serializer to work so hopefully tomorrow I'll know
 
-  #   xit "returns an error when given an :id that doesn't exist" do
-  #     get "/api/v0/markets/123123123123"
-  #     require 'pry';binding.pry
-  #     market = JSON.parse(response.body, symbolize_names: true)
-  #     expect(response.status).to eq('Not Found')
-  #     # expect(response).to_not be_successful
-  #     # expect(response).to eq(404)
-  #   end
   end   
 end
-      
-  
+
+
+#   xit "returns an error when given an :id that doesn't exist" do
+#     get "/api/v0/markets/123123123123"
+#     require 'pry';binding.pry
+#     market = JSON.parse(response.body, symbolize_names: true)
+#     expect(response.status).to eq('Not Found')
+#     # expect(response).to_not be_successful
+#     # expect(response).to eq(404)
+#   end
   
   # xit "can get one book by its id" do
   #       id = create(:book).id

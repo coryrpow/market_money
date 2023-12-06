@@ -3,9 +3,9 @@ Rails.application.routes.draw do
     namespace :v0 do
       resources :markets, only: [:index, :show] do
         # resources :market_vendors, only: [:index]
-        resources :vendors, only: [:index, :show ]
+        resources :vendors, only: [:index ]
       end
-      resources :vendors, only: [:show]
+      # resources :vendors, only: [:show]
       
     end
   end
