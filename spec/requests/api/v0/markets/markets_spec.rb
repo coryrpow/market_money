@@ -142,46 +142,8 @@ RSpec.describe 'Markets API endpoints' do
 
   end   
 end
-
-
-#   xit "returns an error when given an :id that doesn't exist" do
-#     get "/api/v0/markets/123123123123"
-#     require 'pry';binding.pry
-#     market = JSON.parse(response.body, symbolize_names: true)
-#     expect(response.status).to eq('Not Found')
-#     # expect(response).to_not be_successful
-#     # expect(response).to eq(404)
-#   end
   
-  # xit "can get one book by its id" do
-  #       id = create(:book).id
-
-  #       get "/api/v1/books/#{id}"
-
-  #       book = JSON.parse(response.body, symbolize_names: true)
-
-  #       expect(response).to be_successful
-
-  #       expect(book).to have_key(:id)
-  #       expect(book[:id]).to be_an(Integer)
-
-  #       expect(book).to have_key(:title)
-  #       expect(book[:title]).to be_a(String)
-
-  #       expect(book).to have_key(:author)
-  #       expect(book[:author]).to be_a(String)
-
-  #       expect(book).to have_key(:genre)
-  #       expect(book[:genre]).to be_a(String)
-
-  #       expect(book).to have_key(:summary)
-  #       expect(book[:summary]).to be_a(String)
-
-  #       expect(book).to have_key(:number_sold)
-  #       expect(book[:number_sold]).to be_an(Integer)
-  #     end
-
-  #     xit "can create a new book" do
+#     xit "can create a new book" do
   #       book_params = ({
   #                       title: "Murder on the Orient Express",
   #                       author: "Agatha Christie",
