@@ -18,6 +18,12 @@ class Api::V0::VendorsController < ApplicationController
     # require 'pry';binding.pry
   end
 
+  def update
+    vendor = Vendor.find(params[:id])
+    vendor.update!(vendor_params)
+    render json: VendorSerializer.new(vendor)
+  end
+
   # def create
   #   @vendor = Vendor.new(vendor_params)
   #   if @vendor.save
