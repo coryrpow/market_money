@@ -5,7 +5,7 @@ Rails.application.routes.draw do
         # resources :market_vendors, only: [:index]
         resources :vendors, module: :markets, only: [:index ]
       end
-      resources :vendors, only: [:show, :create, :update] do
+      resources :vendors, only: [:show, :create, :update, :destroy] do
 
       end
     end

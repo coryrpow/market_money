@@ -145,4 +145,51 @@ RSpec.describe 'Vendors API endpoints' do
       expect(vendor[:errors][:detail]).to be_a(String)
     end
   end
+
+  describe "DELETE /api/v0/vendors/:id" do
+    it "sends a list of all the vendors and their attributes" do
+      vendor = create(:vendor,
+                      name: "Pretzel King",
+                      description: "The king of pretzels, simple as.",
+                      contact_name: "Petey Pretzel",
+                      contact_phone: "555-505-5554",
+                      credit_accepted: true
+                    )
+      vendor_id = vendor.id
+
+      get "/api/v0/vendors/#{vendor_id}"
+      
+      parse = JSON.parse(response.body, symbolize_names: true)
+      
+      vendor_parse = parse[:data][:attributes]
+      #  require 'pry';binding.pry
+      expect(vendor_parse[:name]).to eq("Pretzel King")
+      expect(vendor_parse[:description]).to eq ("The king of pretzels, simple as.")
+      expect(vendor_parse[:contact_name]).to eq ("Petey Pretzel")
+      expect(vendor_parse[:contact_phone]).to eq ("555-505-5554")
+      expect(vendor_parse[:credit_accepted]).to eq(true)
+
+      delete "/api/v0/vendors/#{vendor_id}"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+    end
+
+    it "can't update a vendor :id that doesn't exist" do
+      delete "/api/v0/vendors/123123123123"
+      
+      expect(response).to_not be_successful
+      
+      expect(response.status).to eq(404)
+      
+      vendor = JSON.parse(response.body, symbolize_names: true)
+      
+      expect(vendor).to have_key(:errors)
+      # require 'pry';binding.pry
+      expect(vendor[:errors]).to be_a(Hash)
+
+      expect(vendor[:errors][:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
+      expect(vendor[:errors][:detail]).to be_a(String)
+    end
+  end
 end
