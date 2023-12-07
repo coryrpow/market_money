@@ -42,10 +42,10 @@ RSpec.describe 'Vendors API endpoints' do
       
       expect(vendor).to have_key(:errors)
       # require 'pry';binding.pry
-      expect(vendor[:errors]).to be_a(Hash)
+      expect(vendor[:errors]).to be_a(Array)
 
-      expect(vendor[:errors][:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
-      expect(vendor[:errors][:detail]).to be_a(String)
+      expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
+      expect(vendor[:errors].first[:detail]).to be_a(String)
     end
   end
 
@@ -139,10 +139,10 @@ RSpec.describe 'Vendors API endpoints' do
       
       expect(vendor).to have_key(:errors)
       # require 'pry';binding.pry
-      expect(vendor[:errors]).to be_a(Hash)
+      expect(vendor[:errors]).to be_a(Array)
 
-      expect(vendor[:errors][:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
-      expect(vendor[:errors][:detail]).to be_a(String)
+      expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
+      expect(vendor[:errors].first[:detail]).to be_a(String)
     end
   end
 
@@ -186,10 +186,10 @@ RSpec.describe 'Vendors API endpoints' do
       
       expect(vendor).to have_key(:errors)
       # require 'pry';binding.pry
-      expect(vendor[:errors]).to be_a(Hash)
+      expect(vendor[:errors]).to be_a(Array)
 
-      expect(vendor[:errors][:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
-      expect(vendor[:errors][:detail]).to be_a(String)
+      expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
+      expect(vendor[:errors].first[:detail]).to be_a(String)
     end
   end
 end

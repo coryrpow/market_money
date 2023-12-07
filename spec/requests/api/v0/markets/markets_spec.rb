@@ -100,11 +100,11 @@ RSpec.describe 'Markets API endpoints' do
       market = JSON.parse(response.body, symbolize_names: true)
       
       expect(market).to have_key(:errors)
-      # require 'pry';binding.pry
-      expect(market[:errors]).to be_a(Hash)
+      expect(market[:errors]).to be_a(Array)
 
-      expect(market[:errors][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
-      expect(market[:errors][:detail]).to be_a(String)
+      expect(market[:errors].first[:status]).to eq("404")
+      expect(market[:errors].first[:detail]).to eq("Couldn't find Market with 'id'=123123123123")
+      expect(market[:errors].first[:detail]).to be_a(String)
     end
   end
 

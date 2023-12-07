@@ -1,6 +1,5 @@
 class Api::V0::MarketsController < ApplicationController
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
-  
+ 
   def index
     render json: MarketSerializer.new(Market.all)
   end
@@ -11,7 +10,5 @@ class Api::V0::MarketsController < ApplicationController
 
   private
 
-  def not_found_response(exception)
-    render json: ErrorSerializer.new(ErrorMessage.new(exception.message)), status: :not_found
-  end
+
 end
