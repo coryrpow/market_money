@@ -37,7 +37,7 @@ RSpec.describe 'MarketVendor API endpoints' do
    
     end
 
-    xit "returns an error when given an :id that doesn't exist" do
+    it "returns an error when given an :id that doesn't exist" do
       get "/api/v0/vendors/123123123123"
       
       expect(response).to_not be_successful
@@ -48,10 +48,10 @@ RSpec.describe 'MarketVendor API endpoints' do
       
       expect(vendor).to have_key(:errors)
       # require 'pry';binding.pry
-      expect(vendor[:errors]).to be_a(Hash)
+      expect(vendor[:errors]).to be_a(Array)
 
-      expect(vendor[:errors][:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
-      expect(vendor[:errors][:detail]).to be_a(String)
+      expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
+      expect(vendor[:errors].first[:detail]).to be_a(String)
     end
 
     xit "returns an error when given an :id that ALREADY exists" do
@@ -61,6 +61,24 @@ RSpec.describe 'MarketVendor API endpoints' do
   #  }
   #  (where 322474 and 54861 are valid market and vendor id's, 
   #  but an existing MarketVendor with those values already exists.)
+
+      vendor = create(:vendor,
+                      name: "Pretzel King",
+                      description: "The king of pretzels, simple as.",
+                      contact_name: "Petey Pretzel",
+                      contact_phone: "555-505-5554",
+                      credit_accepted: true
+                    )
+      vendor_id = vendor.id
+
+      market = create(:market,
+                      name: "Pretzel King",
+                      street: "The king of pretzels, simple as.",
+                      city: "Petey Pretzel",
+                      county: "555-505-5554",
+                      state: true
+                    )
+      market_id = market.id
       get "/api/v0/vendors/123123123123"
       
       expect(response).to_not be_successful

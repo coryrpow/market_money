@@ -9,6 +9,14 @@ RSpec.describe 'Vendors API endpoints' do
       
       expect(response).to be_successful
       expect(response.status).to eq(200)
+
+      single_vendor = Vendor.last
+
+      expect(single_vendor[:name]).to eq("#{single_vendor.name}")
+      expect(single_vendor[:description]).to eq ("#{single_vendor.description}")
+      expect(single_vendor[:contact_name]).to eq ("#{single_vendor.contact_name}")
+      expect(single_vendor[:contact_phone]).to eq ("#{single_vendor.contact_phone}")
+      expect(single_vendor[:credit_accepted]).to eq(single_vendor.credit_accepted)
       
       parse = JSON.parse(response.body, symbolize_names: true)
       
