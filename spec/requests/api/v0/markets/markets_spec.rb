@@ -11,6 +11,17 @@ RSpec.describe 'Markets API endpoints' do
       expect(response).to be_successful
       expect(response.status).to eq(200)
 
+      single_market = Market.last
+
+      expect(single_market[:name]).to eq("#{single_market.name}")
+      expect(single_market[:street]).to eq("#{single_market.street}")
+      expect(single_market[:city]).to eq("#{single_market.city}")
+      expect(single_market[:county]).to eq("#{single_market.county}")
+      expect(single_market[:state]).to eq("#{single_market.state}")
+      expect(single_market[:zip]).to eq("#{single_market.zip}")
+      expect(single_market[:lat]).to eq("#{single_market.lat}")
+      expect(single_market[:lon]).to eq("#{single_market.lon}")
+
       parse = JSON.parse(response.body, symbolize_names: true)
 
       markets = parse[:data]
@@ -49,13 +60,24 @@ RSpec.describe 'Markets API endpoints' do
   end
 
   describe "/api/v0/markets/:id" do
-    it "sends a single market with all attributes" do
+    it "sends a single market with all of its attributes" do
       market_id = create(:market).id
 
       get "/api/v0/markets/#{market_id}"
       
       expect(response).to be_successful
       expect(response.status).to eq(200)
+
+      single_market = Market.last
+
+      expect(single_market[:name]).to eq("#{single_market.name}")
+      expect(single_market[:street]).to eq("#{single_market.street}")
+      expect(single_market[:city]).to eq("#{single_market.city}")
+      expect(single_market[:county]).to eq("#{single_market.county}")
+      expect(single_market[:state]).to eq("#{single_market.state}")
+      expect(single_market[:zip]).to eq("#{single_market.zip}")
+      expect(single_market[:lat]).to eq("#{single_market.lat}")
+      expect(single_market[:lon]).to eq("#{single_market.lon}")
 
       parse = JSON.parse(response.body, symbolize_names: true)
       # require 'pry';binding.pry
@@ -100,28 +122,37 @@ RSpec.describe 'Markets API endpoints' do
       market = JSON.parse(response.body, symbolize_names: true)
       
       expect(market).to have_key(:errors)
-      # require 'pry';binding.pry
-      expect(market[:errors]).to be_a(Hash)
+      expect(market[:errors]).to be_a(Array)
 
-      expect(market[:errors][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
-      expect(market[:errors][:detail]).to be_a(String)
+      expect(market[:errors].first[:status]).to eq("404")
+      expect(market[:errors].first[:detail]).to eq("Couldn't find Market with 'id'=123123123123")
+      expect(market[:errors].first[:detail]).to be_a(String)
     end
   end
 
   describe "/api/v0/markets/:id/vendors" do
-    it "sends a single market with all attributes" do
+    it "sends a single market's vendors and the vendors' attributes" do
       market_id = create(:market).id
       vendors = create_list(:vendor, 6)
       vendors.each do |vendor|
         create(:market_vendor, market_id: market_id, vendor: vendor)
       end
+
       get "/api/v0/markets/#{market_id}/vendors"
+
+      single_vendor = Vendor.last
+
+      expect(single_vendor[:name]).to eq("#{single_vendor.name}")
+      expect(single_vendor[:description]).to eq ("#{single_vendor.description}")
+      expect(single_vendor[:contact_name]).to eq ("#{single_vendor.contact_name}")
+      expect(single_vendor[:contact_phone]).to eq ("#{single_vendor.contact_phone}")
+      expect(single_vendor[:credit_accepted]).to eq(single_vendor.credit_accepted)
       
       expect(response).to be_successful
       expect(response.status).to eq(200)
 
       parse = JSON.parse(response.body, symbolize_names: true)
-      # require 'pry';binding.pry
+      
       vendor = parse[:data][0][:attributes]
 
       expect(vendor).to have_key(:name)
