@@ -2,7 +2,8 @@ require "rails_helper"
 
 RSpec.describe 'MarketVendor API endpoints' do
   describe "POST /api/v0/market_vendors" do
-    it "creates a new association between a market and vendor in the market_vendor" do
+    it "creates a new association between an existing market and vendor in the market_vendor and
+    can show the vendor in the specific market's vendors get request" do
       market_id = create(:market).id
       vendor_id = create(:vendor).id
 
@@ -16,9 +17,16 @@ RSpec.describe 'MarketVendor API endpoints' do
       expect(response).to be_successful
       expect(response.status).to eq(200)
 
+      single_vendor = Vendor.last
+
+      expect(single_vendor[:name]).to eq("#{single_vendor.name}")
+      expect(single_vendor[:description]).to eq ("#{single_vendor.description}")
+      expect(single_vendor[:contact_name]).to eq ("#{single_vendor.contact_name}")
+      expect(single_vendor[:contact_phone]).to eq ("#{single_vendor.contact_phone}")
+      expect(single_vendor[:credit_accepted]).to eq(single_vendor.credit_accepted)
+
       parse = JSON.parse(response.body, symbolize_names: true)
       vendor = parse[:data][0][:attributes]
-    # need to add testing that checks specific name but this is a start at least
 
       expect(vendor).to have_key(:name)
       expect(vendor[:name]).to be_an(String)
@@ -38,29 +46,35 @@ RSpec.describe 'MarketVendor API endpoints' do
     end
 
     it "returns an error when given an :id that doesn't exist" do
-      get "/api/v0/vendors/123123123123"
+      vendor_id = create(:vendor).id
+
+      post "/api/v0/market_vendors", params: { market_id: 987654321, vendor_id: vendor_id }
       
       expect(response).to_not be_successful
-      
       expect(response.status).to eq(404)
       
       vendor = JSON.parse(response.body, symbolize_names: true)
       
       expect(vendor).to have_key(:errors)
-      # require 'pry';binding.pry
       expect(vendor[:errors]).to be_a(Array)
 
-      expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
+      expect(vendor[:errors].first[:status]).to eq("404")
+      expect(vendor[:errors].first[:detail]).to eq("Validation failed: Market must exist")
       expect(vendor[:errors].first[:detail]).to be_a(String)
     end
 
-    xit "returns an error when given an :id that ALREADY exists" do
-  #     {
-  #      "market_id": 322474, 
-  #      "vendor_id": 54861 
-  #  }
-  #  (where 322474 and 54861 are valid market and vendor id's, 
-  #  but an existing MarketVendor with those values already exists.)
+    it "returns an error when given an :id for a vendor_market relationship that ALREADY exists" do
+       market = create(:market,
+                      name: "Bread Lord",
+                      street: "Bread Lane",
+                      city: "Breadsville",
+                      county: "Dough",
+                      state: "BO",
+                      zip: "86753",
+                      lat: "50",
+                      lon: "50"
+                    )
+      market_id = market.id
 
       vendor = create(:vendor,
                       name: "Pretzel King",
@@ -71,16 +85,10 @@ RSpec.describe 'MarketVendor API endpoints' do
                     )
       vendor_id = vendor.id
 
-      market = create(:market,
-                      name: "Pretzel King",
-                      street: "The king of pretzels, simple as.",
-                      city: "Petey Pretzel",
-                      county: "555-505-5554",
-                      state: true
-                    )
-      market_id = market.id
-      get "/api/v0/vendors/123123123123"
-      
+      market_vendor = create(:market_vendor, market_id: market_id, vendor_id: vendor_id)
+
+      post "/api/v0/market_vendors", params: { market_id: market_id, vendor_id: vendor_id }
+  
       expect(response).to_not be_successful
       
       expect(response.status).to eq(422)
@@ -88,11 +96,11 @@ RSpec.describe 'MarketVendor API endpoints' do
       vendor = JSON.parse(response.body, symbolize_names: true)
       
       expect(vendor).to have_key(:errors)
-      # require 'pry';binding.pry
-      expect(vendor[:errors]).to be_a(Hash)
+      expect(vendor[:errors]).to be_a(Array)
 
-      expect(vendor[:errors][:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
-      expect(vendor[:errors][:detail]).to be_a(String)
+      expect(vendor[:errors].first[:status]).to eq("422")
+      expect(vendor[:errors].first[:detail]).to eq("Validation failed: Market vendor association between market with market_id=#{market_id} and vendor_id=#{vendor_id} already exists")
+      expect(vendor[:errors].first[:detail]).to be_a(String)
     end
   end
 end

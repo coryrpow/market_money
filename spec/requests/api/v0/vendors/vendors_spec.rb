@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe 'Vendors API endpoints' do
   describe "/api/v0/vendors/:id" do
-    it "sends a list of all the vendors and their attributes" do
+    it "returns a specific vendor and it's attributes" do
       vendor_id = create(:vendor).id
 
       get "/api/v0/vendors/#{vendor_id}"
@@ -39,7 +39,7 @@ RSpec.describe 'Vendors API endpoints' do
     
     end
 
-    it "returns an error when given an :id that doesn't exist" do
+    it "returns an error when given an :id for a vendor that doesn't exist" do
       get "/api/v0/vendors/123123123123"
       
       expect(response).to_not be_successful
@@ -52,6 +52,7 @@ RSpec.describe 'Vendors API endpoints' do
       # require 'pry';binding.pry
       expect(vendor[:errors]).to be_a(Array)
 
+      expect(vendor[:errors].first[:status]).to eq("404")
       expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
       expect(vendor[:errors].first[:detail]).to be_a(String)
     end
@@ -108,7 +109,7 @@ RSpec.describe 'Vendors API endpoints' do
   end
 
   describe "PATCH /api/v0/vendors/:id" do
-    it "sends a list of all the vendors and their attributes" do
+    it "can update an existing member's attributes" do
       vendor = create(:vendor,
                       name: "Pretzel King",
                       description: "The king of pretzels, simple as.",
@@ -149,13 +150,14 @@ RSpec.describe 'Vendors API endpoints' do
       # require 'pry';binding.pry
       expect(vendor[:errors]).to be_a(Array)
 
+      expect(vendor[:errors].first[:status]).to eq("404")
       expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
       expect(vendor[:errors].first[:detail]).to be_a(String)
     end
   end
 
   describe "DELETE /api/v0/vendors/:id" do
-    it "sends a list of all the vendors and their attributes" do
+    it "deletes a vendor from the database" do
       vendor = create(:vendor,
                       name: "Pretzel King",
                       description: "The king of pretzels, simple as.",
@@ -183,7 +185,7 @@ RSpec.describe 'Vendors API endpoints' do
       expect(response.status).to eq(204)
     end
 
-    it "can't update a vendor :id that doesn't exist" do
+    it "can't delete a vendor with an :id that doesn't exist" do
       delete "/api/v0/vendors/123123123123"
       
       expect(response).to_not be_successful
@@ -196,6 +198,7 @@ RSpec.describe 'Vendors API endpoints' do
       # require 'pry';binding.pry
       expect(vendor[:errors]).to be_a(Array)
 
+      expect(vendor[:errors].first[:status]).to eq("404")
       expect(vendor[:errors].first[:detail]).to eq("Couldn't find Vendor with 'id'=123123123123")
       expect(vendor[:errors].first[:detail]).to be_a(String)
     end

@@ -60,7 +60,7 @@ RSpec.describe 'Markets API endpoints' do
   end
 
   describe "/api/v0/markets/:id" do
-    it "sends a single market with all attributes" do
+    it "sends a single market with all of its attributes" do
       market_id = create(:market).id
 
       get "/api/v0/markets/#{market_id}"
@@ -131,7 +131,7 @@ RSpec.describe 'Markets API endpoints' do
   end
 
   describe "/api/v0/markets/:id/vendors" do
-    it "sends a single market with all attributes" do
+    it "sends a single market's vendors and the vendors' attributes" do
       market_id = create(:market).id
       vendors = create_list(:vendor, 6)
       vendors.each do |vendor|
