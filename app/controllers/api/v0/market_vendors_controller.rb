@@ -25,6 +25,14 @@ class Api::V0::MarketVendorsController < ApplicationController
     end
   end
 
+  def destroy
+    market = params[:market_id]
+    vendor = params[:vendor_id]
+    market_vendor = MarketVendor.find_by(market_id: market, vendor_id: vendor)
+    market_vendor.destroy
+  end
+
+
   private
 
 end

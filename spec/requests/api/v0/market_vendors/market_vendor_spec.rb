@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe 'MarketVendor API endpoints' do
-  describe "POST /api/v0/market_vendors" do
+  describe "Post/Delete /api/v0/market_vendors" do
     it "creates a new association between an existing market and vendor in the market_vendor and
     can show the vendor in the specific market's vendors get request" do
       market_id = create(:market).id
@@ -101,6 +101,53 @@ RSpec.describe 'MarketVendor API endpoints' do
       expect(vendor[:errors].first[:status]).to eq("422")
       expect(vendor[:errors].first[:detail]).to eq("Validation failed: Market vendor association between market with market_id=#{market_id} and vendor_id=#{vendor_id} already exists")
       expect(vendor[:errors].first[:detail]).to be_a(String)
+    end
+
+    it "deletes an association between an existing market and vendor in the market_vendor and
+    deosn't show the vendor in the specific market's vendors get request afterwards" do
+      market_id = create(:market).id
+      vendor_id = create(:vendor).id
+
+      post "/api/v0/market_vendors", params: { market_id: market_id, vendor_id: vendor_id }
+      expect(response).to be_successful
+      expect(response.status).to eq(201)
+
+      delete "/api/v0/market_vendors", params: { market_id: market_id, vendor_id: vendor_id }
+      # require 'pry';binding.pry
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+      
+      # get "/api/v0/vendors/#{vendor_id}/markets"
+
+      # expect(response).to be_successful
+      # expect(response.status).to eq(200)
+
+      # single_vendor = Vendor.last
+
+      # expect(single_vendor[:name]).to eq("#{single_vendor.name}")
+      # expect(single_vendor[:description]).to eq ("#{single_vendor.description}")
+      # expect(single_vendor[:contact_name]).to eq ("#{single_vendor.contact_name}")
+      # expect(single_vendor[:contact_phone]).to eq ("#{single_vendor.contact_phone}")
+      # expect(single_vendor[:credit_accepted]).to eq(single_vendor.credit_accepted)
+
+      # parse = JSON.parse(response.body, symbolize_names: true)
+      # vendor = parse[:data][0][:attributes]
+
+      # expect(vendor).to have_key(:name)
+      # expect(vendor[:name]).to be_an(String)
+
+      # expect(vendor).to have_key(:description)
+      # expect(vendor[:description]).to be_a(String)
+
+      # expect(vendor).to have_key(:contact_name)
+      # expect(vendor[:contact_name]).to be_a(String)
+
+      # expect(vendor).to have_key(:contact_phone)
+      # expect(vendor[:contact_phone]).to be_a(String)
+
+      # expect(vendor).to have_key(:credit_accepted)
+      # expect(vendor[:credit_accepted]).to eq(true).or eq(false)
+   
     end
   end
 end
